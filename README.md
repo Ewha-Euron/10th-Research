@@ -5,7 +5,7 @@
 ---
 
 ## 💚발표 자료💚
-- [📚Week1_ResNet]()
+- [📚Week1_ResNet](https://github.com/Ewha-Euron/10th-Research/issues/7)
 ---
 
 ## 💚우수 과제💚
