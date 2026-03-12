@@ -9,3 +9,6 @@
 ---
 
 ## 💚우수 과제💚
+#### 1주차 예습과제
+- [🌟Week1_예습_최지희님](https://github.com/Ewha-Euron/10th-Research/pull/2/changes)
+- [🌟Week1_예습_이재린님](https://github.com/Ewha-Euron/10th-Research/pull/6/changes#diff-3d26dca5871839616f7277c6fb0aeb7cc6f9eeaf351257d095cd1e9883c15bab)
