@@ -5,5 +5,5 @@
 ---
 
 ## 💚발표 자료💚
-- [📚Week2]()
+- [📚Week2_Transformer](https://github.com/Ewha-Euron/10th-Research/issues/26)
 ---
