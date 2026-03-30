@@ -1,12 +1,11 @@
 # 📁ARCHIVE - 2026/03/31
 
 ## 💚발제 논문💚  
-- [BERT] [BERT: Pre-training of Deep Bidirectional Transformers for
-Language Understanding](https://arxiv.org/abs/1810.04805)
+-  [DQN: Playing Atari with Deep Reinforcement Learning](https://arxiv.org/pdf/1312.5602)
 ---
 
 ## 💚발표 자료💚
-- [📚Week4]()
+- [📚Week4](https://github.com/Ewha-Euron/10th-Research/issues/56)
 ---
 
 ## 💚우수 과제💚
