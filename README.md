@@ -1,7 +1,7 @@
 # 📁ARCHIVE - 2026/03/31
 
 ## 💚발제 논문💚  
--  [DQN: Playing Atari with Deep Reinforcement Learning](https://arxiv.org/pdf/1312.5602)
+-  [DQN][Playing Atari with Deep Reinforcement Learning](https://arxiv.org/pdf/1312.5602)
 ---
 
 ## 💚발표 자료💚
