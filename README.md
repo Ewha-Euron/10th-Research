@@ -6,7 +6,7 @@ Language Understanding](https://arxiv.org/pdf/1810.04805)
 ---
 
 ## 💚발표 자료💚
-- [📚Week5]()
+- [📚Week5](https://github.com/Ewha-Euron/10th-Research/issues/67)
 
 
 ---
