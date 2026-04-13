@@ -1,11 +1,11 @@
-# 📁ARCHIVE - 2026/00/00
+# 📁ARCHIVE - 2026/04/14
 
 ## 💚발제 논문💚  
-- [title](url)
----
+- [Improving Language Understanding by Generative Pre-Training](https://www.mikecaptain.com/resources/pdf/GPT-1.pdf)
+-  [Densely Connected Convolution Network](https://arxiv.org/pdf/1608.06993)
 
 ## 💚발표 자료💚
-- [📚Week1_000](url)
+- [📚Week6_000](url)
 ---
 
 ## 💚우수 과제💚
