@@ -1,0 +1,781 @@
+<html><head><title>Improving Language Understanding by Generative Pre-Training</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body class="pdf ko-KR" lang="ko-KR"><article id="33f1aa3f-848d-806a-bd1e-d008d2300e99" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">👍🏻</span></div><h1 class="page-title" dir="auto">Improving Language Understanding by Generative Pre-Training</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"><h2 id="33f1aa3f-848d-80ae-bfda-faa95f4aa4bb" class="block-color-gray_background">0. Abstract</h2></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-80cf-a46e-cfaeb1f67630"><div style="font-size:1.5em"><span class="icon">📌</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8003-8586-ef52e668e295" class="">▪️ 문제 정의 <div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-801b-91d5-d828804b0f21" class="bulleted-list"><li style="list-style-type:disc">NLP는 다양한 task로 구성됨 </li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-80ca-a04f-c5b2252f4a32" class="bulleted-list"><li style="list-style-type:disc">라벨 데이터 부족 → 지도 학습 모델 성능 향상 어려움 </li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8091-b629-e5ae8412ed78" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8079-a9e9-ec721de46459" class="">💡 대규모 텍스트로 <mark class="highlight-yellow_background"><strong>언어 모델 사전 학습 (pre-training)</strong></mark><div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8022-828c-d4025a5eb277" class="">→ 각 task에 대해 <mark class="highlight-yellow_background"><strong>fine-tunning 수행 </strong></mark></p></div></div></p></div><div style="display:contents" dir="auto"><blockquote id="33f1aa3f-848d-8047-b767-c1ca9d74c1a3" class="">하나의 사전 학습된 언어 모델을 다양한 NLP task에 효과적으로 적용 가능 </blockquote></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8093-8245-c6e3ae0c2944" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8070-bacb-d8fff63e78fc" class="">▪️ 기존 방법과 차이 <div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-803c-9cf4-cea3105decc6" class="bulleted-list"><li style="list-style-type:disc">task-specific 구조 최소화 </li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-800c-a0e9-f37bea1c2c6c" class="bulleted-list"><li style="list-style-type:disc">동일 모델을 다양한 task에 적용 가능 </li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8006-9aab-d76fbf6bee48" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-809c-b5fe-c8abac298681" class="">➡️ <strong>GPT는 pre-training된 언어 모델을 fine-tunning하여 다양한 NLP task를 해결하는 범용 모델</strong> </p></div></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80b9-af58-e340c3be2fbc" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="33f1aa3f-848d-8071-9799-f8eb029eb723" class="block-color-gray_background">1. Introduction</h2></div><div style="display:contents" dir="auto"><h3 id="33f1aa3f-848d-80ce-bffb-f0afa910d7b6" class="block-color-teal_background">논문이 다루는 분야 </h3></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-8079-a8a7-fc5450ca752f"><div style="font-size:1.5em"><span class="icon">🔖</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-800f-a91b-f80c8e1efc19" class=""><strong>자연어 처리 (NLP, Natural Language Processing)</strong></p></div><div style="display:contents" dir="auto"><blockquote id="33f1aa3f-848d-80b0-8016-ccd2bb196d72" class="">자연어 처리(NLP) 분야에서, 대규모 텍스트 데이터를 활용한 언어 표현 학습과              pre-training 기반 transfer learning에 대한 논문 </blockquote></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-806a-8aa3-f2aab76c8df6" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8087-ade8-ce1d2d32b7f4" class="">✅ 언어 표현 학습 (Language Representation Learning)<div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8019-b967-dd90ddc03571" class="">: 텍스트 데이터를 이용해 단어와 문장의 의미를 벡터로 학습하는 분야 </p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-800e-9f89-cf55af817f99" class="">✅ Semi-supervised Learning <div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80ce-bd0b-d9917cf2452c" class="">: 라벨 없는 데이터 + 라벨 있는 데이터 결합한 학습 방식 </p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8018-a271-db5897f627ec" class="">✅ Transfer Learning <div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-808f-a0e3-faa0eda8a85b" class="">: 한 번 학습한 모델을 다양한 task에 재사용 </p></div></div></p></div></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-801d-b94a-d2a762316ed0" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="33f1aa3f-848d-8034-b494-cbabcd6c1a47" class="block-color-teal_background">해당 task에서 기존 연구 한계점 </h3></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-8075-b7b5-d838e90cee13"><div style="font-size:1.5em"><span class="icon">🚨</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-801b-a1b9-cde80caf1770" class="">▪️ 문제 정의 <div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-804c-872e-c73e139b2579" class="bulleted-list"><li style="list-style-type:disc">NLP 모델의 경우 일반적으로 많은 양의 라벨 데이터 필요 <div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8059-9feb-e9936e22dc78" class="">→ 실제로는 <strong>라벨 데이터 확보가 어렵고 비용도 큼</strong> </p></div></li></ul></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80f5-a9d6-cfa4d4061f6e" class="">➡️ 다양한 task에 모델 적용이 어려움 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8022-b539-fcd12b5d8e0e" class="">
+</p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80f9-93dd-efb81a4b217d" class="">▪️기존 접근 방식의 한계 <div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80a9-82e7-fbd2a38b9524" class="">1️⃣ Representation 학습 한계 </p></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-809e-8f05-e36463ac4784" class="bulleted-list"><li style="list-style-type:disc">어떤 방식으로 좋은 언어 표현을 학습할지 명확하지 않음 </li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8068-a9db-eca419ec6461" class="bulleted-list"><li style="list-style-type:disc">language model, translation 등 다양한 방식 존재 </li></ul></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8058-8d3b-f6590c21d619" class="">2️⃣ Task 적용 방식 문제 </p></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-806a-a6b1-dd9c1b9aab62" class="bulleted-list"><li style="list-style-type:disc">기존 모델들은 task마다 구조를 변경하거나 복잡한 설계 필요 <div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80b6-bd64-c574f5e5ae8a" class="">→ 비효율적 </p></div></li></ul></div></div></p></div></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8095-9cf6-e39a726ad6b7" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="33f1aa3f-848d-8091-93b2-c19f3fa8b046" class="block-color-teal_background">논문의 contributions</h3></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-80a1-b790-d07ffa188a2e"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><div style="display:contents" dir="auto"><h4 id="33f1aa3f-848d-8097-9b0c-f74ec0aeabda" class=""><strong>라벨 데이터 부족 문제를 해결하기 위해</strong><mark class="highlight-default_background"><strong> </strong></mark><mark class="highlight-yellow_background"><strong>pre-training + fine-tunning 방식 제안</strong></mark></h4></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8043-9b73-d23f4e971e02" class="">비지도 학습 (Unsupervised learning) 활용하여<div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-809f-8bed-c9c9e3f7ab95" class="">1️⃣ <strong>대규모 unlabeled 데이터</strong>로 <strong>일반적인 언어 표현 (pre-training) 학습 </strong></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80ee-a0ab-f17f798db38f" class="">2️⃣ 이후 각 <strong>task에 맞게 fine-tuning </strong>진행</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80be-afe2-f7118fd3f93a" class="">
+</p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-807d-ada2-dff871876d94" class="">▪️ <strong>Unsupervised + Supervised 결합 학습 </strong><div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80cf-8f68-ca97cb0767ef" class="">➡️ 대규모 unlabeled 데이터로 언어 표현을 사전 학습<div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80f5-bcca-dae387962b09" class="">이후 labeled 데이터를 활용하여 task에 맞게 fine-tuning 수행 </p></div></div></p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-803b-b5db-dbe85a09fc2f" class="">▪️ <strong>Representation 학습 문제 해결 </strong><div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80fa-9bdf-d1acb8a42abd" class="">➡️ language model 기반 pre-training으로 해결 </p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8051-8255-e460bba32572" class="">▪️ <strong>Task 적용 방식 단순화 </strong><div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-800e-96b9-d237cc943c1e" class="">➡️ 하나의 모델을 다양한 task에 적용 가능 </p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80aa-a01b-e6a45e132545" class="">▪️<strong> 범용(universal) 표현 학습 </strong><div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80be-bb51-ccbf0f3b269f" class="">➡️ 특정 task에 종속되지 않은 일반적인 언어 표현 학습 목표 </p></div></div></p></div></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80d6-9607-fc8330a0b032" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="33f1aa3f-848d-802d-bf4c-d615bfa27dc2" class="block-color-gray_background">2. Related Work</h2></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-806d-b24e-cab0714874d2"><div style="font-size:1.5em"><span class="icon">📖</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-808d-b358-edb26d02a223" class="">1️⃣ <strong>Semi-supervised learning for NLP</strong></p></div><div style="display:contents" dir="auto"><blockquote id="33f1aa3f-848d-80ff-88a3-e2fdda258e98" class="">:라벨이 없는 데이터와 라벨이 있는 데이터를 함께 사용하는 방식 </blockquote></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80af-b956-d26178d52c91" class=""> ✅ Unlabeled 데이터로 학습된 word embedding 사용 시 <div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80ae-bb6d-ec80b8e3b16d" class="">여러 NLP task에서 성능이 향상됨 </p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-802b-a9b4-db567931afe1" class="">🚫 단어 수준 (word-level)의 정보만 전달 가능 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8023-b745-fe5a634d0724" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-805c-9dde-f8524ba4a483" class="">2️⃣ <strong>Unsupervised pre-training </strong></p></div><div style="display:contents" dir="auto"><blockquote id="33f1aa3f-848d-805a-849a-d2506929e974" class="">모델을 직접 task에 학습시키는 대신 좋은 초기값(initialzation)을 학습하는 방식</blockquote></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80c7-8904-d12d0f865d8c" class="">✅ 딥러닝 모델의 일반화 성능 향상 <div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8080-8fd8-e404512c91dd" class="">➕ 이미지, 음성, 번역 등 다양한 분야에서 사용 가능 </p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80cc-a045-fe4bc0976c62" class="">🚫 LSTM 기반 모델의 경우 <div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8095-8b5c-fe5d3d744dd0" class="">문장의 긴 문맥(long-range dependency)을 충분히 반영하지 못함</p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8000-b36d-ed0d9744d20c" class="">➡️ Transformer 구조의 경우 <div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-807e-ba33-ec94c9c96d8a" class="">더 긴 문맥을 효과적으로 학습 가능 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80ee-932a-e66cf5d56275" class="">
+</p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-806d-a978-d3371b2de12e" class="">3️⃣ <strong>Auxiliary training objectives </strong></p></div><div style="display:contents" dir="auto"><blockquote id="33f1aa3f-848d-80a5-b635-ef87142d071e" class="">Auxiliary objective (보조 학습 목표)를 추가하는 것</blockquote></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8087-8e05-ee2cccf36fab" class="">✅ 초기 연구에서 POS tagging, NER 등 task에 보조적으로 함께 학습 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8037-854a-d9163652c812" class="">🚫 task마다 추가적인 구조나 복잡한 설계 필요 </p></div></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80da-9cf9-d36725018b11" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="33f1aa3f-848d-807a-81a9-cc4739a7ae54" class="block-color-gray_background">3. 제안 방법론 </h2></div><div style="display:contents" dir="auto"><h3 id="33f1aa3f-848d-806d-bbaf-ef592f5a1729" class="block-color-teal_background">Main Idea &amp; Contribution</h3></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-8058-a0b4-d63ddcb402d3"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8056-ae16-c9b04bd9b724" class="">⭐ 전체적인 학습 과정 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8015-9a4b-f58dfbc78440" class="">☝🏻 대규모 텍스트 데이터를 이용해 고성능 언어 모델을 학습하는 것</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80b7-b4bf-e4bd9db37531" class="">✌🏻 이후 라벨 데이터가 있는 분류 task에 맞게 모델을 fine-tuning</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-804c-ba5e-cbf291403518" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80c7-9dcf-ed6bdb07968b" class="">1️⃣<strong> Unsupervised Pre-training </strong></p></div><div style="display:contents" dir="auto"><blockquote id="33f1aa3f-848d-8070-a8ef-c05aaf084ec5" class="">Language Modeling 기반 사전 학습 </blockquote></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-808d-b2d6-c6a3b867dbd3" class="">➡️ 대규모 Unlabeled 텍스트를 입력으로 사용<div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8087-ab5a-fdc06e392c05" class="">이전 단어들을 기반으로 다음 단어를 예측하도록 학습 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80df-b4d5-e6deeffafd90" class="">
+</p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8098-8a82-cc10c4c164a8" class="">▪️ 학습 목표 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-808c-b715-f6f9d248cf2e" class="">라벨이 없는 텍스트 데이터<style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mrow><mi>u</mi><mn>1</mn><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><mi>u</mi><mi>n</mi></mrow></mrow><annotation encoding="application/x-tex"> U={u1,...,un}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">u</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">...</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">u</span><span class="mord mathnormal">n</span></span></span></span></span></span><span>﻿</span></span>가 주어질 때</p></div><div style="display:contents" dir="auto"><figure id="33f1aa3f-848d-806b-b7a0-fc32a365eba0" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>L</mi><mn>1</mn></msub><mo stretchy="false">(</mo><mi>U</mi><mo stretchy="false">)</mo><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><mi>log</mi><mo>⁡</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>u</mi><mi>i</mi></msub><mo>∣</mo><msub><mi>u</mi><mrow><mi>i</mi><mo>−</mo><mi>k</mi></mrow></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>u</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">;</mo><mi mathvariant="normal">Θ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L_1(U) = \sum_i \log P(u_i \mid u_{i-k}, \dots, u_{i-1}; \Theta)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.3277em;vertical-align:-1.2777em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Θ</span><span class="mclose">)</span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80ad-a0a4-e731032e26d4" class="">➡️ 문맥 <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>u</mi><mo stretchy="false">(</mo></msub><mi>i</mi><mo>−</mo><mi>k</mi><mo stretchy="false">)</mo><mo>…</mo><msub><mi>u</mi><mo stretchy="false">(</mo></msub><mi>i</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">u_(i-k) … u_(i-1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0147em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mopen mtight">(</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1052em;vertical-align:-0.3552em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mopen mtight">(</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span><span>﻿</span></span>를 기반으로 다음 단어 <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mi>i</mi></mrow><annotation encoding="application/x-tex">ui</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">u</span><span class="mord mathnormal">i</span></span></span></span></span><span>﻿</span></span>의 확률 최대화 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80eb-86d0-e5f7b8b9de0c" class="">✅ 문장에서 앞에 나온 단어들을 기반으로 다음에 올 단어를 예측하도록 학습</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80e8-8d40-c4b1c6f8ab25" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8087-807e-c91278350752" class="">▪️ 학습 방식 <div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-804b-b2c0-c77f6a15a4f8" class="">:파라미터는 SGD로 학습 </p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80b8-803a-fad4b634f626" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80f0-8dfd-e7150062d1e7" class="">▪️ 모델 구조 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80a4-826c-e588bae33923" class="">⚙️ multi-layer Transformer decoder 사용</p></div><div style="display:contents" dir="auto"><figure id="33f1aa3f-848d-8009-b5bc-df43fe639a9f" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>h</mi><mn>0</mn></msub><mo>=</mo><mi>U</mi><msub><mi>W</mi><mi>e</mi></msub><mo>+</mo><msub><mi>W</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">h_0 = U W_e + W_p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><figure id="33f1aa3f-848d-8016-abbd-db651230498b" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>h</mi><mi>l</mi><mo>=</mo><mi>t</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>s</mi><mi>f</mi><mi>o</mi><mi>r</mi><mi>m</mi><mi>e</mi><msub><mi>r</mi><mi>b</mi></msub><mi>l</mi><mi>o</mi><mi>c</mi><mi>k</mi><mo stretchy="false">(</mo><mi>h</mi><mi>l</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>l</mi><mo>=</mo><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">hl=transformer_block(hl−1),l=1,…,n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">h</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">an</span><span class="mord mathnormal">s</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal" style="margin-right:0.02778em;">or</span><span class="mord mathnormal">m</span><span class="mord mathnormal">e</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">oc</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mopen">(</span><span class="mord mathnormal">h</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">n</span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><figure id="33f1aa3f-848d-800e-869b-c11ed4951064" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo><mo>=</mo><mtext>softmax</mtext><mo stretchy="false">(</mo><msub><mi>h</mi><mi>n</mi></msub><msubsup><mi>W</mi><mi>e</mi><mi>T</mi></msubsup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(u) = \text{softmax}(h_n W_e^T)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1413em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-2.453em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">e</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80b8-8fb7-e4365d278f51" class="">1️⃣ 입력 토큰 → embedding</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80ff-b113-d3ef6c2cf6d5" class="">2️⃣ self-attention을 통해 이전 토큰들과의 관계 학습</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-801f-9e76-ce11c9cd3e72" class="">3️⃣ feedforward layer 통과 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-809c-ba49-d71c7ad2c2f9" class="">4️⃣ 다음 단어 확률 출력 </p></div></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80ee-b92e-f3203c6c5d94" class="">
+</p></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-8021-a8cf-f69910ea511b"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80d6-be55-c252179df76d" class="">2️⃣ <strong>Supervised Fine-tunning </strong></p></div><div style="display:contents" dir="ltr"><figure id="33f1aa3f-848d-8018-9bbe-f61e0303de47" class="image"><img style="width:400.953125px" src="https://prod-files-secure.s3.us-west-2.amazonaws.com/5764a08d-0611-4097-bd95-516da19e0841/f3e86431-655c-4e16-88b5-791e5144b60b/image.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Credential=ASIAZI2LB4667YPKSYT4%2F20260413%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20260413T110336Z&amp;X-Amz-Expires=21600&amp;X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQDWu4Kf5ANh5SuoIznQW5PQQxFCW1ABeOkfO5Z2DSUhQgIhAPO83Z4V7v6uqaGM3r0BTGKO%2Bo6BNXe%2FC0IM6SZAqkR2Kv8DCHIQABoMNjM3NDIzMTgzODA1IgxQ84rEGu7CvxtWhsAq3AOt%2Fih9OJqrl%2BC2IyLiQeRXKaNlEIffOF2vqRxgbbid2cvMB0vldSFHATf%2F4u3utszpEBIJ9x5OoAynXb%2FrBL%2FPk2ThUmZWl28tChr2JfdeyGLdH3FftPZARJoFz3bdKKJXK%2FnhAkFsCm8CLlGtrKZ4WfSQD%2F%2FBP7AXS9%2F9u8K4t6YI5op874CsPGw697a67LR29J8qq14cZ%2BZ%2FIUI25vwqoXvPThKvjKQwuRfCBN8xB39uO74QuMTdroO%2Bt1SI2McmHIGOJxNney5g6n%2F9jP2%2FfiCQNX0Tagw%2FjS3Z1%2FB29ASKuQ5L3CZR1%2BcLpK8MZtG2vHWluWLl%2BX5FJ%2FRxKQno1NobxAt%2FhWDlG3u5GNv9uvoXwbvs26lEsE1BT9On20rIXwczNMmjMhGp8FcnAZaGMlx2%2F0k4QYMAgOuCaUkpN208CWpDiEAIJ2awQPf4%2FmMd1NDfEyx1j9xyi1L3bR9PqYByLY84qAEFFmtb8lX7xTxlDh3UPaEaKm%2BQiUsfximF6nSszoslvFyZYLdoD51KOm2Xqp7xbiykBFPotvG5ghpL4%2F0cKam%2BWpmCEBiDEVu5WN6CX4R%2Fc1D0nUvYo3uenu2DwZfYmfXOs93YTAwU0vYBjqllf84K76LTeTC36vLOBjqkARZdXjcyI7begyK7GFnfrwXnb6liX2qeIs6hw1AaOBEwLfxmFfa1X55SbpD2J2uD0kBJCeoEC%2FaNS7uU7eDbcw1If65j%2F6krIRUw%2F5VBz7puzfNc9jHWgH51bNPgnfBr1UCS0s2lDeeyOkw3ngwWqtpUdEMI0PqefBuVCgaykHYE4vCfznWiZhaIq6%2BvjsFaZa0OWdCNEQDpJhwZqRLAXIhdA3qk&amp;X-Amz-Signature=1fd249e3bfdea4452b32f422eaa039c7f55799313ec6026338cc33a80725b1a9&amp;X-Amz-SignedHeaders=host&amp;x-amz-checksum-mode=ENABLED&amp;x-id=GetObject"/></figure></div><div style="display:contents" dir="auto"><blockquote id="33f1aa3f-848d-8075-a7b4-fd2b53c914a7" class="">Pre-trained Transformer를 기반으로 다양한 NLP task에 적용하는 단계 </blockquote></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8084-b0d7-d77ee09cad00" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-801f-922c-d77b9f3cecbb" class="">▪️ 전체 흐름</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8004-88ae-e2035c2368f0" class="">입력 시퀀스를 pre-trained Transformer에 통과 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80b7-a34b-cb88c7a804bb" class="">➕ 최종 hidden representation을 기반 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80e1-8af5-d16a5b454bb3" class="">➡️<strong> </strong>linear layer + softmax로 label 예측 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80fb-98a1-e22fa20891ff" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8068-9e34-eb83a638a2c1" class="">▪️ 모델 출력 </p></div><div style="display:contents" dir="auto"><figure id="33f1aa3f-848d-8017-8083-f3150758c5fb" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>x</mi><mi>m</mi><mo stretchy="false">)</mo><mo>=</mo><mi>s</mi><mi>o</mi><mi>f</mi><mi>t</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mi>h</mi><mi>m</mi><mi>W</mi><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(y∣x1,…,xm)=softmax(hmWy)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">x</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">x</span><span class="mord mathnormal">m</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">so</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">t</span><span class="mord mathnormal">ma</span><span class="mord mathnormal">x</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">hmW</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-805b-a920-d6df7f332534" class=""><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>m</mi></msub></mrow><annotation encoding="application/x-tex">h_m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span><span>﻿</span></span> : 마지막 토큰의 hidden state</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8070-b9ac-fb0fe4a866d7" class=""><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>y</mi></msub></mrow><annotation encoding="application/x-tex">W_y </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></span><span>﻿</span></span> : classification layer</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-801b-b865-e14b1bd8be1f" class="">➡️ 입력 문장에 대한 각 label의 확률을 계산 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8030-8aef-cde7ab0e4ab8" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8020-a279-dc573ce8cdd1" class="">▪️ 학습 목표</p></div><div style="display:contents" dir="auto"><figure id="33f1aa3f-848d-809a-82ce-f010b61a7fd6" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>L</mi><mn>2</mn></msub><mo stretchy="false">(</mo><mi>C</mi><mo stretchy="false">)</mo><mo>=</mo><munder><mo>∑</mo><mrow><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow></munder><mi>log</mi><mo>⁡</mo><mi>P</mi><mo stretchy="false">(</mo><mi>y</mi><mo>∣</mo><msup><mi>x</mi><mn>1</mn></msup><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msup><mi>x</mi><mi>m</mi></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L_2(C) = \sum_{(x,y)} \log P(y \mid x^1, \dots, x^m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.566em;vertical-align:-1.516em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.809em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">x</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.516em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1141em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8086-89b8-d2fc61ef5771" class="">➡️ 정답 label의 확률을 최대화 하도록 학습 (log-likelihood)</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-807d-93f4-da644855a642" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-804a-9abb-f6e2ecfeb28d" class="">▪️ 추가 전략</p></div><div style="display:contents" dir="auto"><blockquote id="33f1aa3f-848d-8038-8b99-cebd425659a9" class=""><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80c7-be78-f80812a385e2" class=""> language modeling objective를 보조적으로 사용</p></div></blockquote></div><div style="display:contents" dir="auto"><figure id="33f1aa3f-848d-8064-ae44-c5f0e16ab250" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>L</mi><mn>3</mn><mo stretchy="false">(</mo><mi>C</mi><mo stretchy="false">)</mo><mo>=</mo><mi>L</mi><mn>2</mn><mo stretchy="false">(</mo><mi>C</mi><mo stretchy="false">)</mo><mo>+</mo><mi>λ</mi><mi>L</mi><mn>1</mn><mo stretchy="false">(</mo><mi>C</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L3(C)=L2(C)+λL1(C)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mord">3</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mord">2</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">λ</span><span class="mord mathnormal">L</span><span class="mord">1</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mclose">)</span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80b6-b6ef-e64b5745592c" class="">➡️ task loss + language modeling loss 함께 사용</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-806a-b2ac-ce7a85bb94cc" class="">✅ 일반화 성능 향상 + 학습 안정성 증가 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80c4-ba86-c2c37a08d413" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8007-97c3-f4789d453b97" class="">▪️ 특징 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80c2-8463-e67558969d21" class="">✅ 구조 변경 거의 없음 + 출력 layer만 추가 <div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80d6-9589-e18f660561ac" class="">➡️ 하나의 모델을 다양한 task에 적용 가능</p></div></div></p></div></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80a1-acf8-e2ceae5fc47c" class="">
+</p></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-802e-8047-cb2ce502ffd7"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80f4-8fd2-e0b0f99cd40b" class="">3️⃣ <strong>Task-specific input transformations</strong></p></div><div style="display:contents" dir="auto"><blockquote id="33f1aa3f-848d-80e2-a0ad-fb7b6c47ddca" class="">모델 구조 변경 없이 입력 변환만으로 다양한 task 처리 </blockquote></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8094-a565-dba7a00fda30" class="">➡️ 모든 task를 sequence 형태로 반환 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8048-9de1-dfd5450ced59" class="">✅ task-specific architecture 불필요</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-801d-9e49-e38886f17346" class="">✅ 모델 단순화 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8059-8b10-e06f8bb0bf19" class="">✅ transfer learning 효율 증가 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8047-9487-c045ff879182" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-806c-90c4-d6d4ffdbe4cc" class="">▪️ Task별 입력 방식 </p></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8017-b301-d5a5a4403da3" class="bulleted-list"><li style="list-style-type:disc">Textual Entailment (자연어 추론) <div style="display:contents" dir="auto"><p id="33f1aa3f-848d-809d-9c64-f5d4fa7e12c9" class="">구조 : <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false">[</mo><mi>D</mi><mi>E</mi><mi>L</mi><mi>I</mi><mi>M</mi><mo stretchy="false">]</mo><mi>h</mi></mrow><annotation encoding="application/x-tex">p[DELIM]h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mord mathnormal">L</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mclose">]</span><span class="mord mathnormal">h</span></span></span></span></span><span>﻿</span></span></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80e5-b1e8-cbb398d89ffe" class="">➡️ 두 문장을 연결하여 관계 판단 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80bc-9175-c3842b0d3302" class="">
+</p></div></li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-80b2-b54c-c180eab0c67e" class="bulleted-list"><li style="list-style-type:disc">Similarity (문장 유사도) <div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80d7-b29b-ccb03c0b5e00" class="">구조 :<style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>x</mi><mn>1</mn><mo separator="true">,</mo><mi>x</mi><mn>2</mn><mo stretchy="false">)</mo><mo separator="true">,</mo><mo stretchy="false">(</mo><mi>x</mi><mn>2</mn><mo separator="true">,</mo><mi>x</mi><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex"> (x1,x2),(x2,x1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">x</span><span class="mord">2</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">x</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span><span>﻿</span></span></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8005-8b22-fca7b46ea134" class="">➡️ 두 순서 모두 사용 후 결과 결합 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8089-8aa2-d1e882cb2123" class="">
+</p></div></li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8071-af9c-ebfe54c8f8b2" class="bulleted-list"><li style="list-style-type:disc">Question Answering <div style="display:contents" dir="auto"><p id="33f1aa3f-848d-805e-a2df-d85bb85dd586" class="">구조 : <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo stretchy="false">[</mo><mi>D</mi><mi>E</mi><mi>L</mi><mi>I</mi><mi>M</mi><mo stretchy="false">]</mo><mi>q</mi><mo stretchy="false">[</mo><mi>D</mi><mi>E</mi><mi>L</mi><mi>I</mi><mi>M</mi><mo stretchy="false">]</mo><mi>a</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">z[DELIM]q[DELIM]ak</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mord mathnormal">L</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mclose">]</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mord mathnormal">L</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mclose">]</span><span class="mord mathnormal" style="margin-right:0.03148em;">ak</span></span></span></span></span><span>﻿</span></span></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8029-b6d6-fb7458ee88ae" class="">➡️ 각 답 후보를 독립적으로 평가 </p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80e2-905e-feed22a060c3" class="">
+</p></div></li></ul></div></div></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-804a-8808-fd9b029b1348" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="33f1aa3f-848d-8017-9fe2-c3d521b0b645" class="block-color-gray_background">4. 실험 및 결과 </h2></div><div style="display:contents" dir="auto"><h3 id="33f1aa3f-848d-80c6-8868-f0e786e76a67" class="block-color-teal_background">Dataset</h3></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-80e0-9d65-e7ad31feb410"><div style="font-size:1.5em"><span class="icon">🗂️</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8006-805d-ebcadf4baa1a" class=""><strong>Pre-training과 Fine-tuning에 사용된 데이터 셋 구성 </strong></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8037-b586-c0cf752f6afc" class="">▪️ Pre-training Datset<div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-804b-8fb5-c6246bf72ae5" class="">➡️ BooksCorpus</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-809d-8c24-cb34f0ce7170" class="">✅ 약 7000권 이상의 책 데이터</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-806f-9e1a-e0848686a975" class="">✅ 다양한 장르 포함</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-802c-a284-fcc04a775c93" class="">✅ 자연스러운 문장 흐름 학습에 적합</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8011-baec-f2e1ca9d951f" class="">
+</p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80b4-8468-ce58d1de1af7" class="">▪️ Fine-tunnung Dataset (Task별)</p></div><div style="display:contents" dir="ltr"><figure id="33f1aa3f-848d-8010-a951-c3fc0a839429" class="image"><img style="width:400.9375px" src="https://prod-files-secure.s3.us-west-2.amazonaws.com/5764a08d-0611-4097-bd95-516da19e0841/29d9c099-3913-4a10-996d-803060b481c4/image.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Credential=ASIAZI2LB4667YPKSYT4%2F20260413%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20260413T110336Z&amp;X-Amz-Expires=21600&amp;X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQDWu4Kf5ANh5SuoIznQW5PQQxFCW1ABeOkfO5Z2DSUhQgIhAPO83Z4V7v6uqaGM3r0BTGKO%2Bo6BNXe%2FC0IM6SZAqkR2Kv8DCHIQABoMNjM3NDIzMTgzODA1IgxQ84rEGu7CvxtWhsAq3AOt%2Fih9OJqrl%2BC2IyLiQeRXKaNlEIffOF2vqRxgbbid2cvMB0vldSFHATf%2F4u3utszpEBIJ9x5OoAynXb%2FrBL%2FPk2ThUmZWl28tChr2JfdeyGLdH3FftPZARJoFz3bdKKJXK%2FnhAkFsCm8CLlGtrKZ4WfSQD%2F%2FBP7AXS9%2F9u8K4t6YI5op874CsPGw697a67LR29J8qq14cZ%2BZ%2FIUI25vwqoXvPThKvjKQwuRfCBN8xB39uO74QuMTdroO%2Bt1SI2McmHIGOJxNney5g6n%2F9jP2%2FfiCQNX0Tagw%2FjS3Z1%2FB29ASKuQ5L3CZR1%2BcLpK8MZtG2vHWluWLl%2BX5FJ%2FRxKQno1NobxAt%2FhWDlG3u5GNv9uvoXwbvs26lEsE1BT9On20rIXwczNMmjMhGp8FcnAZaGMlx2%2F0k4QYMAgOuCaUkpN208CWpDiEAIJ2awQPf4%2FmMd1NDfEyx1j9xyi1L3bR9PqYByLY84qAEFFmtb8lX7xTxlDh3UPaEaKm%2BQiUsfximF6nSszoslvFyZYLdoD51KOm2Xqp7xbiykBFPotvG5ghpL4%2F0cKam%2BWpmCEBiDEVu5WN6CX4R%2Fc1D0nUvYo3uenu2DwZfYmfXOs93YTAwU0vYBjqllf84K76LTeTC36vLOBjqkARZdXjcyI7begyK7GFnfrwXnb6liX2qeIs6hw1AaOBEwLfxmFfa1X55SbpD2J2uD0kBJCeoEC%2FaNS7uU7eDbcw1If65j%2F6krIRUw%2F5VBz7puzfNc9jHWgH51bNPgnfBr1UCS0s2lDeeyOkw3ngwWqtpUdEMI0PqefBuVCgaykHYE4vCfznWiZhaIq6%2BvjsFaZa0OWdCNEQDpJhwZqRLAXIhdA3qk&amp;X-Amz-Signature=20c1217e2e69b572b8c33dc786a7de0f91688d063ce369e9506284203a25823f&amp;X-Amz-SignedHeaders=host&amp;x-amz-checksum-mode=ENABLED&amp;x-id=GetObject"/></figure></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80fc-9d90-fb531d62176a" class="">1️⃣  Question Answering (QA)<div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8048-aaec-d6d42ef42a29" class="bulleted-list"><li style="list-style-type:disc">RACE dataset</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-80e5-af2a-dc78b3daeb1c" class="bulleted-list"><li style="list-style-type:disc">SQuAD</li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80f8-8868-c2278a382ae9" class="">2️⃣ Natural Language Inference (NLI)<div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-80d4-918a-d5ba208ee724" class="bulleted-list"><li style="list-style-type:disc">MultiNLI</li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80aa-84e3-c7521a20d1a5" class="">3️⃣ Semantic Similarity<div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8058-9c2b-c658f6a4f2e1" class="bulleted-list"><li style="list-style-type:disc">STS-B</li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80e8-9838-de6a666a3d35" class="">4️⃣ Paraphrase / Similarity<div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8016-8e82-ce920bd0d8d1" class="bulleted-list"><li style="list-style-type:disc">QQP</li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-803d-9fe0-d9593f1a38f4" class="">5️⃣ Classification<div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8011-b476-d0a9f955a929" class="bulleted-list"><li style="list-style-type:disc">CoLA (문법성 판단)</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8081-a77d-f6d7bc48b703" class="bulleted-list"><li style="list-style-type:disc">SST-2 (감정 분류)</li></ul></div></div></p></div></div></figure></div><div style="display:contents" dir="auto"><h3 id="33f1aa3f-848d-806f-afd6-d9cb1ba1df84" class="block-color-teal_background">Baseline</h3></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="33f1aa3f-848d-80ef-b326-ff0ae2416d8c"><div style="font-size:1.5em"><span class="icon">⚙️</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8039-9ce3-c6184cf137e2" class="">1️⃣ <strong>ELMo 기반 모델</strong><div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-80b0-b90b-ed63cc740f97" class="bulleted-list"><li style="list-style-type:disc">ESIM + ELMo</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-80d0-a2d8-c051e9339313" class="bulleted-list"><li style="list-style-type:disc">BiLSTM + ELMo + Attention</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-80bc-8881-ddabe1d7700e" class="bulleted-list"><li style="list-style-type:disc">Multi-task BiLSTM + ELMo + Attention</li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-801f-a83a-c888a36513fc" class="">▪️ 특징<div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8079-bffe-e5981219f719" class="">✅ pre-trained embedding을 feature로 활용</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-803c-97f6-c9c595cd910d" class="">✅ LSTM 기반 구조</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-807b-8b25-dfb00260dd72" class="">✅ task별로 별도 모델 설계 필요</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-807b-a30f-e0ba65b8926c" class="">
+</p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8070-aaa9-d92a2b35c53d" class="">2️⃣<strong> Attention / Memory 기반 모델</strong><div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8014-ae05-d350caf0f6cb" class="bulleted-list"><li style="list-style-type:disc">Stochastic Answer Network</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-803f-9180-f48096c02619" class="bulleted-list"><li style="list-style-type:disc">Dynamic Fusion Net</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8067-8b6e-f01340b74b22" class="bulleted-list"><li style="list-style-type:disc">BiAttention Flow</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-80ac-94a7-e018dae24f77" class="bulleted-list"><li style="list-style-type:disc">Mnemonic Reader</li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8012-a6d8-fe99049d70dc" class="">▪️ 특징<div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-800e-996c-dd3367f1ae97" class="">✅ 복잡한 attention / memory 구조 사용</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80ef-9fb8-ed7a65362498" class="">✅ 주로 QA 및 reasoning task에 활용</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-800c-b51b-e068786d4a0e" class="">✅ task별 맞춤 설계 필요</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-800c-87e8-e0660f88434b" class="">
+</p></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8007-b2d5-e8392cfe03f0" class="">3️⃣ <strong>기타 기존 SOTA 모델</strong><div class="indented"><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-809a-8a35-d2cc328e03d7" class="bulleted-list"><li style="list-style-type:disc">TF-KLD</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8032-8abb-dcfe6e8a6fb2" class="bulleted-list"><li style="list-style-type:disc">ECNU</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8020-81d9-d8e1b251d340" class="bulleted-list"><li style="list-style-type:disc">Sparse byte mLSTM</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-80a4-9e58-f09a84fa88ab" class="bulleted-list"><li style="list-style-type:disc">GenSen</li></ul></div><div style="display:contents" dir="auto"><ul id="33f1aa3f-848d-8021-a68c-d5e6ba6c7f93" class="bulleted-list"><li style="list-style-type:disc">CBoW 기반 모델</li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80bf-93a0-c49d5af11f1e" class="">▪️ 특징<div class="indented"><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-80fc-9e08-c748100b8518" class="">✅ 다양한 방식의 sentence representation 사용</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-801a-a711-e0356ee806c4" class="">✅ feature engineering 또는 사전학습 표현 활용</p></div><div style="display:contents" dir="auto"><p id="33f1aa3f-848d-8028-97da-e2440309b26b" class="">✅ task별 최적화된 구조 필요</p></div></div></p></div></div></figure></div><div style="display:contents" dir="auto"><h3 id="33f1aa3f-848d-8002-a78f-d570b12a0993" class="block-color-teal_background">결과 </h3></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="3411aa3f-848d-803f-9a68-d9e6b92edf50"><div style="font-size:1.5em"><span class="icon">📎</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="3411aa3f-848d-80fb-9423-f3bae3b8e02c" class="">1️⃣ <strong>Nateural Language Inference (NLI)</strong></p></div><div style="display:contents" dir="ltr"><figure id="3411aa3f-848d-80c0-9d64-f8cb753381c4" class="image"><img style="width:351.28125px" src="https://prod-files-secure.s3.us-west-2.amazonaws.com/5764a08d-0611-4097-bd95-516da19e0841/647f8c9b-8309-4c34-8b26-b092d9132b76/image.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Credential=ASIAZI2LB4667YPKSYT4%2F20260413%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20260413T110336Z&amp;X-Amz-Expires=21600&amp;X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQDWu4Kf5ANh5SuoIznQW5PQQxFCW1ABeOkfO5Z2DSUhQgIhAPO83Z4V7v6uqaGM3r0BTGKO%2Bo6BNXe%2FC0IM6SZAqkR2Kv8DCHIQABoMNjM3NDIzMTgzODA1IgxQ84rEGu7CvxtWhsAq3AOt%2Fih9OJqrl%2BC2IyLiQeRXKaNlEIffOF2vqRxgbbid2cvMB0vldSFHATf%2F4u3utszpEBIJ9x5OoAynXb%2FrBL%2FPk2ThUmZWl28tChr2JfdeyGLdH3FftPZARJoFz3bdKKJXK%2FnhAkFsCm8CLlGtrKZ4WfSQD%2F%2FBP7AXS9%2F9u8K4t6YI5op874CsPGw697a67LR29J8qq14cZ%2BZ%2FIUI25vwqoXvPThKvjKQwuRfCBN8xB39uO74QuMTdroO%2Bt1SI2McmHIGOJxNney5g6n%2F9jP2%2FfiCQNX0Tagw%2FjS3Z1%2FB29ASKuQ5L3CZR1%2BcLpK8MZtG2vHWluWLl%2BX5FJ%2FRxKQno1NobxAt%2FhWDlG3u5GNv9uvoXwbvs26lEsE1BT9On20rIXwczNMmjMhGp8FcnAZaGMlx2%2F0k4QYMAgOuCaUkpN208CWpDiEAIJ2awQPf4%2FmMd1NDfEyx1j9xyi1L3bR9PqYByLY84qAEFFmtb8lX7xTxlDh3UPaEaKm%2BQiUsfximF6nSszoslvFyZYLdoD51KOm2Xqp7xbiykBFPotvG5ghpL4%2F0cKam%2BWpmCEBiDEVu5WN6CX4R%2Fc1D0nUvYo3uenu2DwZfYmfXOs93YTAwU0vYBjqllf84K76LTeTC36vLOBjqkARZdXjcyI7begyK7GFnfrwXnb6liX2qeIs6hw1AaOBEwLfxmFfa1X55SbpD2J2uD0kBJCeoEC%2FaNS7uU7eDbcw1If65j%2F6krIRUw%2F5VBz7puzfNc9jHWgH51bNPgnfBr1UCS0s2lDeeyOkw3ngwWqtpUdEMI0PqefBuVCgaykHYE4vCfznWiZhaIq6%2BvjsFaZa0OWdCNEQDpJhwZqRLAXIhdA3qk&amp;X-Amz-Signature=546eb49b2ede8f76ebbad887404580815518bb31b3becd11b74a88462479d16b&amp;X-Amz-SignedHeaders=host&amp;x-amz-checksum-mode=ENABLED&amp;x-id=GetObject"/></figure></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-80f0-88ef-d8ba764c5dbb" class="">➡️두 문장(premise, hypothesis)의 관계 판단 </p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-8078-9905-f2177a652b21" class="">✅ 5개 중 4개의 dataset에서  baseline 성능 초과</p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-808b-90f1-f6e50cffe0d8" class="">
+</p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-803b-8deb-e9f0b10cb3ac" class="">2️⃣ <strong>Question Answering &amp; Commonsense Reasoning</strong></p></div><div style="display:contents" dir="ltr"><figure id="3411aa3f-848d-80f2-98ba-cbab8e31b841" class="image"><img style="width:351.29168701171875px" src="https://prod-files-secure.s3.us-west-2.amazonaws.com/5764a08d-0611-4097-bd95-516da19e0841/f8722181-bc2c-465b-a299-b858b9cf4ce4/image.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Credential=ASIAZI2LB4667YPKSYT4%2F20260413%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20260413T110336Z&amp;X-Amz-Expires=21600&amp;X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQDWu4Kf5ANh5SuoIznQW5PQQxFCW1ABeOkfO5Z2DSUhQgIhAPO83Z4V7v6uqaGM3r0BTGKO%2Bo6BNXe%2FC0IM6SZAqkR2Kv8DCHIQABoMNjM3NDIzMTgzODA1IgxQ84rEGu7CvxtWhsAq3AOt%2Fih9OJqrl%2BC2IyLiQeRXKaNlEIffOF2vqRxgbbid2cvMB0vldSFHATf%2F4u3utszpEBIJ9x5OoAynXb%2FrBL%2FPk2ThUmZWl28tChr2JfdeyGLdH3FftPZARJoFz3bdKKJXK%2FnhAkFsCm8CLlGtrKZ4WfSQD%2F%2FBP7AXS9%2F9u8K4t6YI5op874CsPGw697a67LR29J8qq14cZ%2BZ%2FIUI25vwqoXvPThKvjKQwuRfCBN8xB39uO74QuMTdroO%2Bt1SI2McmHIGOJxNney5g6n%2F9jP2%2FfiCQNX0Tagw%2FjS3Z1%2FB29ASKuQ5L3CZR1%2BcLpK8MZtG2vHWluWLl%2BX5FJ%2FRxKQno1NobxAt%2FhWDlG3u5GNv9uvoXwbvs26lEsE1BT9On20rIXwczNMmjMhGp8FcnAZaGMlx2%2F0k4QYMAgOuCaUkpN208CWpDiEAIJ2awQPf4%2FmMd1NDfEyx1j9xyi1L3bR9PqYByLY84qAEFFmtb8lX7xTxlDh3UPaEaKm%2BQiUsfximF6nSszoslvFyZYLdoD51KOm2Xqp7xbiykBFPotvG5ghpL4%2F0cKam%2BWpmCEBiDEVu5WN6CX4R%2Fc1D0nUvYo3uenu2DwZfYmfXOs93YTAwU0vYBjqllf84K76LTeTC36vLOBjqkARZdXjcyI7begyK7GFnfrwXnb6liX2qeIs6hw1AaOBEwLfxmFfa1X55SbpD2J2uD0kBJCeoEC%2FaNS7uU7eDbcw1If65j%2F6krIRUw%2F5VBz7puzfNc9jHWgH51bNPgnfBr1UCS0s2lDeeyOkw3ngwWqtpUdEMI0PqefBuVCgaykHYE4vCfznWiZhaIq6%2BvjsFaZa0OWdCNEQDpJhwZqRLAXIhdA3qk&amp;X-Amz-Signature=b7a9a1ff63b9a4ccd1c8e689a7ea34d55f4c59ad01229f3ad3a3128aef22f66f&amp;X-Amz-SignedHeaders=host&amp;x-amz-checksum-mode=ENABLED&amp;x-id=GetObject"/></figure></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-803b-96b5-f166bd374eea" class="">➡️ 긴 문맥 기반 질문 응답 &amp; 상식 추론 포함</p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-80c5-b797-c61e2f55d171" class="">✅ 모든 dataset에서 기존 모델 성능 초과 </p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-801e-8524-f0e605bb65de" class="">
+</p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-80c8-9c5b-cf94d2628537" class="">3️⃣ <strong>Semantic Similarity</strong></p></div><div style="display:contents" dir="ltr"><figure id="3411aa3f-848d-8055-b9c6-f55a1caa3bdf" class="image"><img style="width:351.29168701171875px" src="https://prod-files-secure.s3.us-west-2.amazonaws.com/5764a08d-0611-4097-bd95-516da19e0841/b4e4dbfa-d682-43fa-bbad-660ab8b91be1/image.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Credential=ASIAZI2LB4667YPKSYT4%2F20260413%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20260413T110336Z&amp;X-Amz-Expires=21600&amp;X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQDWu4Kf5ANh5SuoIznQW5PQQxFCW1ABeOkfO5Z2DSUhQgIhAPO83Z4V7v6uqaGM3r0BTGKO%2Bo6BNXe%2FC0IM6SZAqkR2Kv8DCHIQABoMNjM3NDIzMTgzODA1IgxQ84rEGu7CvxtWhsAq3AOt%2Fih9OJqrl%2BC2IyLiQeRXKaNlEIffOF2vqRxgbbid2cvMB0vldSFHATf%2F4u3utszpEBIJ9x5OoAynXb%2FrBL%2FPk2ThUmZWl28tChr2JfdeyGLdH3FftPZARJoFz3bdKKJXK%2FnhAkFsCm8CLlGtrKZ4WfSQD%2F%2FBP7AXS9%2F9u8K4t6YI5op874CsPGw697a67LR29J8qq14cZ%2BZ%2FIUI25vwqoXvPThKvjKQwuRfCBN8xB39uO74QuMTdroO%2Bt1SI2McmHIGOJxNney5g6n%2F9jP2%2FfiCQNX0Tagw%2FjS3Z1%2FB29ASKuQ5L3CZR1%2BcLpK8MZtG2vHWluWLl%2BX5FJ%2FRxKQno1NobxAt%2FhWDlG3u5GNv9uvoXwbvs26lEsE1BT9On20rIXwczNMmjMhGp8FcnAZaGMlx2%2F0k4QYMAgOuCaUkpN208CWpDiEAIJ2awQPf4%2FmMd1NDfEyx1j9xyi1L3bR9PqYByLY84qAEFFmtb8lX7xTxlDh3UPaEaKm%2BQiUsfximF6nSszoslvFyZYLdoD51KOm2Xqp7xbiykBFPotvG5ghpL4%2F0cKam%2BWpmCEBiDEVu5WN6CX4R%2Fc1D0nUvYo3uenu2DwZfYmfXOs93YTAwU0vYBjqllf84K76LTeTC36vLOBjqkARZdXjcyI7begyK7GFnfrwXnb6liX2qeIs6hw1AaOBEwLfxmFfa1X55SbpD2J2uD0kBJCeoEC%2FaNS7uU7eDbcw1If65j%2F6krIRUw%2F5VBz7puzfNc9jHWgH51bNPgnfBr1UCS0s2lDeeyOkw3ngwWqtpUdEMI0PqefBuVCgaykHYE4vCfznWiZhaIq6%2BvjsFaZa0OWdCNEQDpJhwZqRLAXIhdA3qk&amp;X-Amz-Signature=d1fc11bdba0642bbbe586fff505b5e19290034bf249e5d16db09555d4d53f16e&amp;X-Amz-SignedHeaders=host&amp;x-amz-checksum-mode=ENABLED&amp;x-id=GetObject"/></figure></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-801e-a655-eddc4a7a1d00" class="">➡️ 두 문장이 의미적으로 유사한지 판단</p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-80bd-8c29-dea400ebaa54" class="">✅ 3개 중 2개의 task에서 SOTA 달성</p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-8044-8ca5-c3bebd0b5e88" class="">
+</p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-8094-b88a-ee8e5fd6d8bb" class="">4️⃣ <strong>Classification  </strong></p></div><div style="display:contents" dir="ltr"><figure id="3411aa3f-848d-80fc-a90f-ea1f81fbbde1" class="image"><img style="width:351.29168701171875px" src="https://prod-files-secure.s3.us-west-2.amazonaws.com/5764a08d-0611-4097-bd95-516da19e0841/b4e4dbfa-d682-43fa-bbad-660ab8b91be1/image.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Credential=ASIAZI2LB4667YPKSYT4%2F20260413%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20260413T110336Z&amp;X-Amz-Expires=21600&amp;X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQDWu4Kf5ANh5SuoIznQW5PQQxFCW1ABeOkfO5Z2DSUhQgIhAPO83Z4V7v6uqaGM3r0BTGKO%2Bo6BNXe%2FC0IM6SZAqkR2Kv8DCHIQABoMNjM3NDIzMTgzODA1IgxQ84rEGu7CvxtWhsAq3AOt%2Fih9OJqrl%2BC2IyLiQeRXKaNlEIffOF2vqRxgbbid2cvMB0vldSFHATf%2F4u3utszpEBIJ9x5OoAynXb%2FrBL%2FPk2ThUmZWl28tChr2JfdeyGLdH3FftPZARJoFz3bdKKJXK%2FnhAkFsCm8CLlGtrKZ4WfSQD%2F%2FBP7AXS9%2F9u8K4t6YI5op874CsPGw697a67LR29J8qq14cZ%2BZ%2FIUI25vwqoXvPThKvjKQwuRfCBN8xB39uO74QuMTdroO%2Bt1SI2McmHIGOJxNney5g6n%2F9jP2%2FfiCQNX0Tagw%2FjS3Z1%2FB29ASKuQ5L3CZR1%2BcLpK8MZtG2vHWluWLl%2BX5FJ%2FRxKQno1NobxAt%2FhWDlG3u5GNv9uvoXwbvs26lEsE1BT9On20rIXwczNMmjMhGp8FcnAZaGMlx2%2F0k4QYMAgOuCaUkpN208CWpDiEAIJ2awQPf4%2FmMd1NDfEyx1j9xyi1L3bR9PqYByLY84qAEFFmtb8lX7xTxlDh3UPaEaKm%2BQiUsfximF6nSszoslvFyZYLdoD51KOm2Xqp7xbiykBFPotvG5ghpL4%2F0cKam%2BWpmCEBiDEVu5WN6CX4R%2Fc1D0nUvYo3uenu2DwZfYmfXOs93YTAwU0vYBjqllf84K76LTeTC36vLOBjqkARZdXjcyI7begyK7GFnfrwXnb6liX2qeIs6hw1AaOBEwLfxmFfa1X55SbpD2J2uD0kBJCeoEC%2FaNS7uU7eDbcw1If65j%2F6krIRUw%2F5VBz7puzfNc9jHWgH51bNPgnfBr1UCS0s2lDeeyOkw3ngwWqtpUdEMI0PqefBuVCgaykHYE4vCfznWiZhaIq6%2BvjsFaZa0OWdCNEQDpJhwZqRLAXIhdA3qk&amp;X-Amz-Signature=d1fc11bdba0642bbbe586fff505b5e19290034bf249e5d16db09555d4d53f16e&amp;X-Amz-SignedHeaders=host&amp;x-amz-checksum-mode=ENABLED&amp;x-id=GetObject"/></figure></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-8062-a91d-db23adc98b9e" class="">➡️ 문장 단위 분류</p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-80b0-9aff-d4839f4af6bc" class="">✅ CoLA : 45.4 , SST-2 : 91.3% accuracy </p></div></div></figure></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-80ff-ab64-c934a7235908" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="3411aa3f-848d-80fd-94f9-cdc282e5936f" class="block-color-gray_background">5. 결론</h2></div><div style="display:contents" dir="ltr"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="3411aa3f-848d-8072-98d5-fdb0cb14f02a"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="3411aa3f-848d-80d9-80cb-f17e662018fb" class=""><strong>Generative pre-training과 discriminative fine-tuning을 결합하여 다양한 자연어 이해 task에 적용 가능한 학습 프레임워크를 제안</strong></p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-80f6-90bb-d3b072d8a8a7" class="">
+</p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-8047-8e33-c4357e944762" class="">▪️ 핵심 기여 <div class="indented"><div style="display:contents" dir="auto"><ul id="3411aa3f-848d-80df-b3a1-d0228afe463e" class="bulleted-list"><li style="list-style-type:disc">generative pre-training과 fine-tunning 결합</li></ul></div><div style="display:contents" dir="auto"><ul id="3411aa3f-848d-8024-8bb4-e34efaa67acb" class="bulleted-list"><li style="list-style-type:disc">하나의 모델로 다양한 NLP 처리 가능 </li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-8091-af83-c87bdf63230c" class="">▪️ 모델 특징 <div class="indented"><div style="display:contents" dir="auto"><ul id="3411aa3f-848d-809c-b522-fb8fd96d6cc8" class="bulleted-list"><li style="list-style-type:disc">긴 문맥(long-range dependency) 이해 가능</li></ul></div><div style="display:contents" dir="auto"><ul id="3411aa3f-848d-8066-8322-ec643895ef23" class="bulleted-list"><li style="list-style-type:disc">언어적 패턴과 구조 학습</li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-8084-a286-c1d84686943a" class="">▪️ 의의 <div class="indented"><div style="display:contents" dir="auto"><ul id="3411aa3f-848d-8061-bd76-d773ae470b68" class="bulleted-list"><li style="list-style-type:disc">unsupervised pre-training의 효과 입증 </li></ul></div><div style="display:contents" dir="auto"><ul id="3411aa3f-848d-80d8-9c60-e410b3ea0944" class="bulleted-list"><li style="list-style-type:disc">NLP에서 transfer learning 가능성 확장 </li></ul></div></div></p></div><div style="display:contents" dir="auto"><p id="3411aa3f-848d-805f-b855-e21685c99853" class="">
+</p></div></div></figure></div></div></article></body></html>
