@@ -1,3 +1,6 @@
+### 노션 pdf 추출 실패 오류로 인해 마크다운 문서로 올렸습니다..! 아래 첨부 링크가 과제 노션 링크입니다. 
+https://jihidev.notion.site/5-Improving-Language-Understanding-by-Generative-Pre-Training-3415bbf9fdfa804aa1b7dc7f8a895c55?source=copy_link
+
 ## 1. Introduction
 
 ### 논문이 다루는 분야
