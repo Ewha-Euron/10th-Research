@@ -6,7 +6,7 @@
 ---
 
 ## 💚발표 자료💚
-- [📚Week6_000](url)
+- [📚Week6](https://github.com/Ewha-Euron/10th-Research/issues/92)
 ---
 
 ## 💚우수 과제💚
