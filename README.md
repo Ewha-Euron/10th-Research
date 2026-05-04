@@ -10,5 +10,5 @@
 ---
 
 ## 💚우수 과제💚
-- 김윤서(https://github.com/yoonseo17/10th-Research/blob/0bca7a33af4800ce5ec4b676ada1bb97eb6240f7/Week6_예습과제_김윤서.pdf)
-- 김서영(https://github.com/SeoyeongKim12/10th-Research/blob/42b7f77a1e7827cf19cd588f79b5a0b08b86ee21/Week6_예습과제_김서영_10기.pdf)
+- [Week6_김윤서](https://github.com/yoonseo17/10th-Research/blob/0bca7a33af4800ce5ec4b676ada1bb97eb6240f7/Week6_예습과제_김윤서.pdf)
+- [Week6_김서영](https://github.com/SeoyeongKim12/10th-Research/blob/42b7f77a1e7827cf19cd588f79b5a0b08b86ee21/Week6_예습과제_김서영_10기.pdf)
