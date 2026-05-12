@@ -1,4 +1,4 @@
-# 📁ARCHIVE - 2026/00/00
+# 📁ARCHIVE - 2026/05/12
 
 ## 💚발제 논문💚  
 - [Adam: A Method for Stochastic Optimization](https://arxiv.org/pdf/1412.6980)
