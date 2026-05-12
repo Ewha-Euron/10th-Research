@@ -1,11 +1,12 @@
 # 📁ARCHIVE - 2026/00/00
 
 ## 💚발제 논문💚  
-- [title](url)
+- [Adam: A Method for Stochastic Optimization](https://arxiv.org/pdf/1412.6980)
+- [Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)
 ---
 
 ## 💚발표 자료💚
-- [📚Week1_000](url)
+- [📚Week10](url)
 ---
 
 ## 💚우수 과제💚
